@@ -1,19 +1,61 @@
-// Get the element with the id 'MenuItems'
-var MenuItems = document.getElementById('MenuItems');
+let inpNewTask = $("#inpNewTask");
+let btnAdd = $("#btnAdd");
+let btnReset = $("#btnReset");
+let btnSort = $("#btnSort");
+let btnCleanup = $("#btnCleanup");
+let ulTasks = $("#ulTasks");
 
-// Initialize the max height to 0px
-MenuItems.style.maxHeight = '0px';
+function addItem() {
 
+    let listItem = $('<li>', {'class': 'list-group-item', text: inpNewTask.val()})
 
+    //setting the class of list item to disabled (on click)
+    listItem.click(() => {
+        listItem.toggleClass('done')
+    })
 
-// Define the function to toggle the menu
-function menutoggle() {
-    // Check the current max height
-    if (MenuItems.style.maxHeight === '0px') {
-        // If it's 0px, set it to 200px
-        MenuItems.style.maxHeight = '200px';
-    } else {
-        // If it's not 0px, set it back to 0px
-        MenuItems.style.maxHeight = '0px';
-    }
+    //appending the task to the list
+    ulTasks.append(listItem)
+
+    //resetting the input box to empty string
+    inpNewTask.val('')
+
+    //for btnSort and btnCleanup
+    toggleInputButtons()
 }
+
+function clearDone() {
+    $('#ulTasks .done').remove()
+
+    //for btnSort and btnCleanup
+    toggleInputButtons()
+}
+
+function sortTask() {
+    $('#ulTasks .done').appendTo(ulTasks)
+}
+
+function toggleInputButtons() {
+    btnReset.prop('disabled', inpNewTask.val() == '')
+    btnAdd.prop('disabled', inpNewTask.val() == '')
+    btnSort.prop('disabled', ulTasks.children().length < 1)
+    btnCleanup.prop('disabled', ulTasks.children().length < 1)
+}
+
+//Handling "enter" keypress
+inpNewTask.keypress((key) => {
+    if (key.which == 13) addItem()
+})
+
+inpNewTask.on('input', toggleInputButtons)
+
+btnAdd.click(() => addItem());
+
+btnReset.click(() => {
+    inpNewTask.val('')
+    toggleInputButtons()
+})
+
+btnCleanup.click(() => clearDone())
+
+btnSort.click(() => sortTask())
